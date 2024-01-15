@@ -9,7 +9,7 @@
 
 ## Ссылки на проект
 
-IP-адрес 158.160.19.247
+IP 158.160.19.247
 
 Frontend https://freyrskept.nomoredomainsmonster.ru
 
