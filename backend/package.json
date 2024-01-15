@@ -16,7 +16,7 @@
   "keywords": [
     "yandex-praktikum"
   ],
-  "author": "",
+  "author": "Freyrs Kept",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.7.0",
