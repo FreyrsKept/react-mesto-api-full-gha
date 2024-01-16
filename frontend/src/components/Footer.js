@@ -1,9 +1,12 @@
+import React from "react";
+
 function Footer() {
-    return (
-        <footer className="footer">
-            <p className="footer__description">© 2023 Mesto Russia</p>
-        </footer>
-    )
+  const currentYear = new Date().getFullYear();
+  return (
+    <footer className="footer">
+      <p className="footer__copyright" lang="en">&copy; {currentYear} Mesto Russia</p>
+    </footer>
+  );
 }
 
 export default Footer;

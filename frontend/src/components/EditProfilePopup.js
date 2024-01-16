@@ -1,53 +1,58 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
-import { CurrentUserContext } from "./CurrentUserContext";
+import { useState, useEffect, useContext } from 'react';
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function EditProfilePopup(props) {
-    const [name, setName] = React.useState('');
-    const [description, setDescription] = React.useState('');
-    const currentUser = React.useContext(CurrentUserContext);
+function EditProfilePopup({ isOpen, onClose, onUpdateUser, submitTitle, onEscClick, onOverlayClick }) {
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
 
-    function handleNameUpdate(evt) {
-        setName(evt.target.value);
+    // Подписка на контекст
+    const currentUser = useContext(CurrentUserContext);
+
+    // После загрузки текущего пользователя из API его данные будут использованы в управляемых компонентах.
+    useEffect(() => {
+        setName(currentUser.name);
+        setDescription(currentUser.about);
+    }, [currentUser, isOpen]);
+
+    function changeName(e) {
+        setName(e.target.value);
     }
 
-    function handleDescriptionUpdate(evt) {
-        setDescription(evt.target.value);
+    function changeDescription(e) {
+        setDescription(e.target.value);
     }
 
-    function handleSubmit(evt) {
-        evt.preventDefault();
+    function handleSubmit(e) {
+        // Запрещаем браузеру переходить по адресу формы
+        e.preventDefault();
 
-        props.onSubmit({
-            profile_name: name,
-            profile_job: description
+        // Передаём значения управляемых компонентов во внешний обработчик
+        onUpdateUser({
+            name: name,
+            about: description,
         });
     }
 
-    React.useEffect(() => {
-        if (props.isOpen) {
-            setName(currentUser.name);
-            setDescription(currentUser.about);
-        }
-    }, [props.isOpen, currentUser]);
-
     return (
         <PopupWithForm
-            isOpen={props.isOpen}
-            onCloseClick={props.onCloseClick}
-            onClose={props.onClose}
-            name={'edit'}
-            form={'profileSettings'}
-            title={'Редактировать профиль'}
-            buttonText={'Сохранить'}
+            type="edit-popup"
+            name="editPopup"
+            title="Редактировать профиль"
+            submitTitle={submitTitle}
+            isOpen={isOpen}
+            onClose={onClose}
             onSubmit={handleSubmit}
+            onEscClick={onEscClick}
+            onOverlayClick={onOverlayClick}
         >
-            <input name="name" id="username-input" type="text" placeholder="Ваше имя" className="popup__input" minLength="2" maxLength="40" value={name} onChange={handleNameUpdate} required />
-            <span className="username-input-error popup__input-error"></span>
-            <input name="about" id="description-input" type="text" placeholder="Ваша профессия" className="popup__input" minLength="2" maxLength="200" value={description} onChange={handleDescriptionUpdate} required />
-            <span className="description-input-error popup__input-error"></span>
+            <input onChange={changeName} className="popup__input popup__input_type_name" type="text" name="name" value={name || ""} placeholder="Имя" id="name-input" minLength="2" maxLength="40" required />
+            <span id="name-input-error" className="popup__error"></span>
+            <input onChange={changeDescription} className="popup__input popup__input_type_user-info" type="text" name="about" value={description || ""} placeholder="О себе" id="userInfo-input" minLength="2" maxLength="200" required />
+            <span id="userInfo-input-error" className="popup__error"></span>
         </PopupWithForm>
-    )
+    );
 }
 
 export default EditProfilePopup;

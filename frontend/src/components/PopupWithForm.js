@@ -1,16 +1,19 @@
-function PopupWithForm(props) {
+import React from "react";
+
+function PopupWithForm({ type, isOpen, onClose, title, name, children, submitTitle, onSubmit, onEscClick, onOverlayClick }) {
+
     return (
-        <div className={`popup popup_type_${props.name} ${props.isOpen ? `popup_opened` : ""}`} onClick={props.onCloseClick}>
-            <div className="popup__container">
-                <form name={props.form} className="popup__form" onSubmit={props.onSubmit}>
-                    <h2 className="popup__title">{props.title}</h2>
-                    {props.children}
-                    <button type="submit" title="Сохранить" className="popup__submit">{props.buttonText}</button>
+        <div onKeyDown={onEscClick} onClick={onOverlayClick} className={`popup ${type} ${isOpen && "popup_opened"}`}>
+            <div className={`popup__container ${type}__container`}>
+                <button className={`popup__close-button ${type}__close-button`} type="button" aria-label="Кнопка закрытия данного попапа" onClick={onClose}></button>
+                <h2 className={`popup__title ${type}__title`}>{title}</h2>
+                <form onSubmit={onSubmit} className={`popup__form ${type}__form`} name={name}>
+                    {children}
+                    <button type="submit" className={`popup__submit-button popup__button ${type}__submit-button`}>{submitTitle}</button>
                 </form>
-                <button type="button" className="popup__close" aria-label="Закрыть" onClick={props.onClose} />
             </div>
         </div>
-    )
+    );
 }
 
 export default PopupWithForm;

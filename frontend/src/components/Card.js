@@ -1,38 +1,50 @@
 import React from "react";
-import { CurrentUserContext } from './CurrentUserContext';
+import { useContext } from 'react';
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function Card(props) {
-    const currentUser = React.useContext(CurrentUserContext);
-    const isOwn = props.card.owner._id === currentUser._id;
-    const isLiked = props.card.likes.some(i => i._id === currentUser._id);
-    const cardDeleteButtonClassName = (`cards__delete ${isOwn ? 'cards__delete_active' : ''}`);
-    const cardLikeButtonClassName = (`cards__like-button ${isLiked ? 'cards__like-button_active' : ''}`);
+function Card({ card, onCardClick, onCardLike, onCardDelete }) {
+    //Подписываемся на контекст текущего пользователя
+    const currentUser = useContext(CurrentUserContext);
+
+    // Определяем, являемся ли мы владельцем текущей карточки
+    const isOwn = (card.owner._id || card.owner) === currentUser._id;
+
+    // Определяем, есть ли у карточки лайк, поставленный текущим пользователем
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    // Создаём переменную, которую зададим в `className` для кнопки лайка
+    const cardLikeButtonClassName = (
+        `element__like-button ${isLiked && 'element__like-button_active'}`
+    );
 
     function handleClick() {
-        props.onCardClick(props.card);
+        onCardClick(card);
     }
 
-    function handleCardLike() {
-        props.onCardLike(props.card);
+    function handleLikeClick() {
+        onCardLike(card);
     }
 
-    function handleCardDelete() {
-        props.onCardDelete(props.card);
+    function handleDeleteClick() {
+        onCardDelete(card);
     }
 
     return (
-        <div className="cards__element">
-            <button type="button" title="Удалить" className={cardDeleteButtonClassName} onClick={handleCardDelete} />
-            <img className="cards__image" src={props.link} alt={props.name} title="Развернуть фото" onClick={handleClick} />
-            <div className="cards__info">
-                <h2 className="cards__title">{props.name}</h2>
-                <div className="cards__like-wrp">
-                    <button type="button" title="Нравится" className={cardLikeButtonClassName} onClick={handleCardLike} />
-                    <p className="cards__like-counter">{props.likes}</p>
+        <li className="elements__card">
+            <article className="element" id={card._id}>
+                <img className="element__photo" src={card.link} alt={card.name} onClick={handleClick} />
+                {isOwn && (
+                    <button onClick={handleDeleteClick} className="element__trash-button element__trash-button_active" type="button" aria-label="Кнопка для удаления карточки места"></button>
+                )}
+                <div className="element__description">
+                    <h2 className="element__title">{card.name}</h2>
+                    <div className="element__like-container">
+                        <button onClick={handleLikeClick} className={cardLikeButtonClassName} type="button" aria-label="Кнопка лайка карточке места"></button>
+                        <p className="element__like-caption">{card.likes.length}</p>
+                    </div>
                 </div>
-            </div>
-        </div>
-    )
+            </article>
+        </li>
+    );
 }
 
 export default Card;

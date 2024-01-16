@@ -1,31 +1,35 @@
 .profile__description {
-  color: #fff;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 400;
-  grid-column: -3/-1;
-  line-height: 22px;
-  margin: 0;
-  max-width: 336px;
-  overflow: hidden;
-  padding: 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    margin: 0;
+    padding: 0;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    align-self: start;
+    width: 336px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
 }
 
-@media screen and (max-width: 915px) {
-  .profile__description {
-    font-size: 16px;
-    line-height: 18px;
-    max-width: 225px;
-    text-align: center;
-  }
+@media screen and (max-width: 990px) {
+    .profile__description {
+        margin-bottom: 33px;
+        grid-column-start: 1;
+        grid-column-end: 2;
+        text-align: center;
+        justify-self: center;
+    }
 }
 
-@media screen and (max-width: 700px) {
-  .profile__description {
-    font-size: 14px;
-    line-height: 17px;
-    margin: 0 auto 36px;
-  }
+@media screen and (max-width: 568px) {
+    .profile__description {
+        font-size: 14px;
+        line-height: 17px;
+        width: 189px;
+    }
 }

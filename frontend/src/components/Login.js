@@ -1,32 +1,38 @@
-import { useState } from "react";
+import React from "react";
+import AuthForm from "./AuthForm";
+import { useState } from 'react';
 
-function Login(props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+function Login({ onLogin }) {
+    const [emailValue, setEmailValue] = useState("");
+    const [passwordValue, setPasswordValue] = useState("");
 
-  function handleEmailInput(evt) {
-    setEmail(evt.target.value);
-  }
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onLogin(emailValue, passwordValue);
+        setEmailValue("");
+        setPasswordValue("");
+    }
 
-  function handlePasswordInput(evt) {
-    setPassword(evt.target.value);
-  }
+    function changeEmail(e) {
+        setEmailValue(e.target.value);
+    }
 
-  function handleSubmit(evt) {
-    evt.preventDefault();
-    props.onLogin(email, password);
-  }
+    function changePassword(e) {
+        setPasswordValue(e.target.value);
+    }
 
-  return (
-    <section className="login">
-      <h2 className="login__title">Вход</h2>
-      <form className="login__form" onSubmit={handleSubmit}>
-        <input className="login__input" type="email" placeholder="Email" value={email} onChange={handleEmailInput} required></input>
-        <input className="login__input" type="password" placeholder="Пароль" value={password} autoComplete="on" onChange={handlePasswordInput} required></input>
-        <button className="login__button" type="submit">Войти</button>
-      </form>
-    </section>
-  )
+    return (
+        <AuthForm
+            type="login"
+            title="Вход"
+        >
+            <form className="auth__form" onSubmit={handleSubmit}>
+                <input onChange={changeEmail} className="auth__input auth__input_type_email" type="email" value={emailValue || ""} name="email" placeholder="Email" minLength="2" maxLength="30" required />
+                <input onChange={changePassword} className="auth__input auth__input_type_password" type="password" value={passwordValue || ""} name="password" placeholder="Пароль" minLength="6" maxLength="30" required />
+                <button type="submit" className="auth__button">Войти</button>
+            </form>
+        </AuthForm>
+    );
 }
 
-export default Login
+export default Login;

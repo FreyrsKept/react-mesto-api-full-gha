@@ -1,24 +1,20 @@
-// Список классов для валидации
-export const settings = {
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__submit',
-    inactiveButtonClass: 'popup__submit_disabled',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__input_type_visible',
-  };
+//Валидация 
+export const checkForms = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__submit-button',
+  inactiveButtonClass: 'popup__submit-button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+};
 
-  // переменные для карточек
-export const popupAddCardSelector = '.popup_type_add-card';
-export const profileButtonAdd = document.querySelector('.profile__add');
-export const cardsContainerSelector = '.cards__list';
-export const deleteCardPopupSelector = '.popup_type_card-delete';
+// //Переменные для редактирования аватара
+// export const buttonAvatar = document.querySelector('.profile__avatar-edit-button');
 
-// переменные для изменения профиля
-export const editAvatarPopupSelector = '.popup_type_avatar-edit';
-export const profileAvatarEdit = document.querySelector('.profile__avatar-edit');
-export const editProfilePopupSelector = '.popup_type_profile';
-export const profileButtonEdit = document.querySelector('.profile__name-edit');
+// //Переменные для редактирования профиля
+// export const buttonEdit = document.querySelector('.profile__edit-button');
+// export const inputName = document.querySelector('#name-input');
+// export const inputJob = document.querySelector('#userInfo-input');
 
-// переменные для попапа с просмотром
-export const viewPopup = '.popup_type_image-view';
+// //Переменные для добавления карточки
+// export const buttonAdd = document.querySelector('.profile__add-button');
