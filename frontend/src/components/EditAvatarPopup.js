@@ -1,6 +1,6 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
 function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, submitTitle, onEscClick, onOverlayClick }) {
     const avatarRef = useRef(); // записываем объект, возвращаемый хуком, в переменную
@@ -13,7 +13,6 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, submitTitle, onEscCl
         });
         avatarRef.current.value = "";
     }
-
     return (
         <PopupWithForm
             type="new-avatar-popup"

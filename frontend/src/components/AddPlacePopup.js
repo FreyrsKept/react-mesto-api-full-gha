@@ -21,13 +21,11 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, submitTitle, onEscClick, o
 
     function handleSubmit(e) {
         e.preventDefault();
-
         onAddPlace({
             place: place,
             pictureSrc: link,
         });
     }
-
     return (
         <PopupWithForm
             type="add-popup"

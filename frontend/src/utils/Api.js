@@ -122,7 +122,7 @@ class Api {
 }
 
 const api = new Api({
-    url: 'https://api.freyrskept.nomoredomainsmonster.ru/',
+    url: 'https://api.freyrskept.nomoredomainsmonster.ru',
 });
 
 export default api;

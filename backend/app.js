@@ -10,6 +10,7 @@ const NotFound = require('./errors/notFound');
 const { PORT, MONGO_URL, INTERNAL_SERVER_STATUS } = require('./config/config');
 const { userRouter, cardRouter } = require('./routes');
 const cors = require('./middlewares/cors');
+
 const app = express();
 
 app.use(express.json());

@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://api.freyrskept.nomoredomainsmonster.ru/';
+export const BASE_URL = 'https://api.freyrskept.nomoredomainsmonster.ru';
 
 //Проверка ответа от сервера
 export const checkResponse = (res) => {

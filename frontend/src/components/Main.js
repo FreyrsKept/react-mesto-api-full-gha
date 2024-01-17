@@ -1,5 +1,7 @@
 import React from "react";
-import { useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import profileAvatar from '../images/Profile_Avatar.jpg';
+import api from "../utils/Api";
 import Card from "./Card";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
