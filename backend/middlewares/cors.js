@@ -3,7 +3,7 @@ const allowedCors = [
   'https://freyrskept.nomoredomainsmonster.ru',
   'http://freyrskept.nomoredomainsmonster.ru',
   'https://api.freyrskept.nomoredomainsmonster.ru',
-  'http://api.freyrskept.nomoredomainsmonster.rur',
+  'http://api.freyrskept.nomoredomainsmonster.ru',
   'https://localhost:3000',
   'http://localhost:3000',
 ];

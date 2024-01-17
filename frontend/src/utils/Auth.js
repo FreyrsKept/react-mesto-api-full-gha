@@ -1,15 +1,12 @@
 export const BASE_URL = 'https://api.freyrskept.nomoredomainsmonster.ru';
 
-//Проверка ответа от сервера
 export const checkResponse = (res) => {
     if (res.ok) {
         return res.json();
     }
-    // если ошибка, отклоняем промис
     return Promise.reject(`Ошибка: ${res.status}`);
 };
 
-// 1. Регистрация пользователя
 export const registerUser = (email, password) => {
     return fetch(`${BASE_URL}/signup`, {
         method: 'POST',
@@ -22,7 +19,6 @@ export const registerUser = (email, password) => {
         .then((res) => checkResponse(res));
 }
 
-// 2. Авторизация пользователя
 export const loginUser = (email, password) => {
     return fetch(`${BASE_URL}/signin`, {
         method: 'POST',
@@ -41,7 +37,6 @@ export const loginUser = (email, password) => {
         })
 };
 
-// 3. Проверка валидности токена пользователя
 export const getContent = (token) => {
     return fetch(`${BASE_URL}/users/me`, {
         method: 'GET',
