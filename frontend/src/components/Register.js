@@ -6,22 +6,18 @@ import { useState } from 'react';
 function Register({ onRegister }) {
     const [emailValue, setEmailValue] = useState("");
     const [passwordValue, setPasswordValue] = useState("");
-
     const handleSubmit = (e) => {
         e.preventDefault();
         onRegister(emailValue, passwordValue);
         setEmailValue("");
         setPasswordValue("");
     }
-
     function changeEmail(e) {
         setEmailValue(e.target.value);
     }
-
     function changePassword(e) {
         setPasswordValue(e.target.value);
     }
-
     return (
         <AuthForm
             type="register"
