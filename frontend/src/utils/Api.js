@@ -99,6 +99,14 @@ class Api {
             });
     }
 
+    _checkResponse(res) {
+        if (res.ok) {
+            return res.json();
+        } else {
+            return Promise.reject(`Ошибка выполнения запроса: ${res.status}`);
+        }
+    }
+
     _request(url, options) {
         const token = localStorage.getItem('token');
         if (token !== null) {
