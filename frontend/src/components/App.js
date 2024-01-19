@@ -20,42 +20,29 @@ import SuccessImgSrc from "../images/Info_Success.svg";
 import FailImgSrc from "../images/Info_Fail.svg";
 
 function App() {
-  // хук навигации
   const navigate = useNavigate();
-  // состояние авторизации пользователя
   const [loggedIn, setLoggedIn] = useState(false);
-  // email для отображения в хедере
   const [userEmail, setUserEmail] = useState("");
-  // состояние отображения попапов
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
   const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
-  // массив карточек для отображения на странице
   const [cards, setCards] = useState([]);
-  // выбранная карточка на данный момент
   const [selectedCard, setSelectedCard] = useState(null);
-  // карточка, которую нужно удалить 
   const [deletedCard, setDeletedCard] = useState(null);
-  // текущий пользователь
   const [currentUser, setCurrentUser] = useState({});
-  // тексты на сабмит-кнопках попапов
   const [editSubmitTitle, setEditSubmitTitle] = useState("Сохранить");
   const [avatarSubmitTitle, setAvatarSubmitTitle] = useState("Обновить");
   const [addSubmitTitle, setAddSubmitTitle] = useState("Добавить");
-  // текст и картинка для отображения в инфо-попапе при входе и регистрации
   const [infoTitle, setInfoTitle] = useState("");
   const [infoImg, setInfoImg] = useState(null);
-  // токен текущего пользователя
   const [currentToken, setCurrentToken] = useState(localStorage.getItem('token'));
 
-  // проверка токена каждый раз, когда пользователь открывает страницу
   useEffect(() => {
     checkToken();
   }, []);
-
-  // загрузка карточек и профиля пользователя
+  console.log(currentToken);
   useEffect(() => {
     if (loggedIn && currentToken) {
       Promise.all([api.getUserData(currentToken), api.getInitialCards(currentToken)])
@@ -69,7 +56,6 @@ function App() {
     }
   }, [loggedIn, currentToken]);
 
-  // регистрация пользователя в системе
   function handleRegistration(email, password) {
     auth.registerUser(email, password)
       .then((res) => {
@@ -88,7 +74,6 @@ function App() {
       });
   }
 
-  // авторизация пользователя
   function handleLogin(email, password) {
     auth.loginUser(email, password)
       .then((data) => {
@@ -106,7 +91,6 @@ function App() {
       });
   }
 
-  // выход пользователя из системы
   function handleLogout() {
     setLoggedIn(false);
     localStorage.removeItem('token');
@@ -114,7 +98,6 @@ function App() {
     navigate('/sign-in', { replace: true });
   }
 
-  // проверка токена
   function checkToken() {
     if (currentToken) {
       auth.getContent(currentToken).then((res) => {
@@ -130,7 +113,6 @@ function App() {
     }
   }
 
-  // функции для открытия попапов
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
   }
@@ -148,7 +130,6 @@ function App() {
     setDeletedCard(card);
   }
 
-  // закрытие попапов
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
@@ -158,19 +139,15 @@ function App() {
     setSelectedCard(null);
   }
 
-  // выбор текущей карточки
   function handleCardClick(card) {
     setSelectedCard(card);
   }
 
-  // постановка или удаление лайка с карточки
   function handleCardLike(card) {
-    // Проверяем, есть ли уже лайк на этой карточке
     const isLiked = card.likes.some(i => i._id === currentUser._id);
-    // Отправляем запрос в API
-    if (isLiked) { //если лайк на карточке уже есть
+    if (isLiked) {
       api.removeLike(card._id, currentToken)
-        .then((res) => { //получаем обновленный объект карточки
+        .then((res) => {
           setCards((state) =>
             state.map((c) => c._id === card._id ? res : c)
           );
@@ -178,9 +155,9 @@ function App() {
         .catch(() => {
           console.log(`Ошибка при удалении лайка.`)
         });
-    } else { //если лайка на карточке нет
+    } else {
       api.setLike(card._id, currentToken)
-        .then((res) => { //получаем обновленный объект карточки
+        .then((res) => {
           setCards((state) =>
             state.map((c) => c._id === card._id ? res : c)
           );
@@ -191,7 +168,6 @@ function App() {
     }
   }
 
-  // удаление карточки
   function handleCardDelete() {
     api.deleteCard(deletedCard._id, currentToken)
       .then(() => {
@@ -206,7 +182,6 @@ function App() {
       });
   }
 
-  // обновление информации в профиле пользователя
   function handleUpdateUser(userData) {
     setEditSubmitTitle("Сохраняем...");
     const name = userData.name;
@@ -224,11 +199,10 @@ function App() {
       });
   }
 
-  // обновление аватара
   function handleUpdateAvatar(avatarData) {
     setAvatarSubmitTitle("Обновляем...");
     api.changeAvatar(avatarData.avatar, currentToken)
-      .then((res) => { //получаем новый объект пользователя 
+      .then((res) => {
         setCurrentUser(res);
         closeAllPopups();
       })
@@ -240,13 +214,12 @@ function App() {
       })
   }
 
-  // добавление новой карточки
   function handleAddPlaceSubmit(cardData) {
     setAddSubmitTitle("Добавляем...");
     const place = cardData.place;
     const pictureSrc = cardData.pictureSrc;
     api.addNewCard(place, pictureSrc, currentToken)
-      .then((newCard) => { //получаем объект новой карточки
+      .then((newCard) => {
         setCards([newCard, ...cards]);
         closeAllPopups();
         console.log(`Карточка добавлена.`)
@@ -259,14 +232,12 @@ function App() {
       })
   }
 
-  // закрытие попапа при нажатии на Escape
   function handleEscClose(e) {
     if (e.key === 'Escape') {
       closeAllPopups();
     }
   }
 
-  // закрытие попапа при клике на оверлей
   function handleOverlay(e) {
     if (!e.target.closest('.popup__container')) {
       closeAllPopups();
