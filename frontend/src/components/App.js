@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import api from "../utils/Api";
@@ -22,7 +22,6 @@ import FailImgSrc from "../images/Info_Fail.svg";
 function App() {
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -37,18 +36,22 @@ function App() {
   const [addSubmitTitle, setAddSubmitTitle] = useState("Добавить");
   const [infoTitle, setInfoTitle] = useState("");
   const [infoImg, setInfoImg] = useState(null);
-  const [token, setCurrentToken] = useState(localStorage.getItem('token'));
+  const [token, setCurrentToken] = useState(() => localStorage.getItem('token'));
 
   useEffect(() => {
-    checkToken();
-  }, []);
+    if (token) {
+      checkToken(token);
+    }
+  }, [token]);
+
   console.log(token);
+
   useEffect(() => {
     if (loggedIn && token) {
       Promise.all([api.getUserData(token), api.getInitialCards(token)])
         .then(([resUser, resCards]) => {
-          setCurrentUser(resUser);
-          setCards(resCards.reverse());
+          setCurrentUser(resUser.data);
+          setCards(resCards.data.reverse());
         })
         .catch(() => {
           console.log(`Ошибка при загрузке данных пользователя и карточек.`);
@@ -80,9 +83,9 @@ function App() {
         if (data.token) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('loggedIn', true);
-          // setToken(data.token);
+          setCurrentToken(data.token)
+          //записать текущего пользователя
           setLoggedIn(true);
-          setUserEmail(email);
           navigate('/', { replace: true });
         }
       })
@@ -97,23 +100,21 @@ function App() {
   function handleLogout() {
     setLoggedIn(false);
     localStorage.removeItem('token');
-    setCurrentToken('');
+    setCurrentToken(null);
     navigate('/sign-in', { replace: true });
   }
 
   function checkToken() {
-    if (token) {
-      auth.getContent(token).then((res) => {
-        if (res) {
-          setLoggedIn(true);
-          setUserEmail(res.email);
-          navigate("/", { replace: true });
-        }
-      })
-        .catch(() => {
-          console.log(`Ошибка при проверке токена`);
-        });
-    }
+    auth.getContent(token).then((res) => {
+      if (res) {
+        setLoggedIn(true);
+        setCurrentUser(res.data)
+        navigate("/", { replace: true });
+      }
+    })
+      .catch(() => {
+        console.log(`Ошибка при проверке токена`);
+      });
   }
 
   function handleEditAvatarClick() {
@@ -146,13 +147,13 @@ function App() {
     setSelectedCard(card);
   }
 
-  function handleCardLike(card) {
+  const handleCardLike = useCallback(function (card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
     if (isLiked) {
       api.removeLike(card._id, token)
         .then((res) => {
           setCards((state) =>
-            state.map((c) => c._id === card._id ? res : c)
+            state.map((c) => c._id === card._id ? res.data : c)
           );
         })
         .catch(() => {
@@ -162,14 +163,14 @@ function App() {
       api.setLike(card._id, token)
         .then((res) => {
           setCards((state) =>
-            state.map((c) => c._id === card._id ? res : c)
+            state.map((c) => c._id === card._id ? res.data : c)
           );
         })
         .catch(() => {
           console.log(`Ошибка при постановке лайка.`)
         });
     }
-  }
+  }, [])
 
   function handleCardDelete() {
     api.deleteCard(deletedCard._id, token)
@@ -191,7 +192,7 @@ function App() {
     const about = userData.about;
     api.editProfile(name, about, token)
       .then((res) => {
-        setCurrentUser(res);
+        setCurrentUser(res.data);
         closeAllPopups();
       })
       .catch(() => {
@@ -206,7 +207,7 @@ function App() {
     setAvatarSubmitTitle("Обновляем...");
     api.changeAvatar(avatarData.avatar, token)
       .then((res) => {
-        setCurrentUser(res);
+        setCurrentUser(res.data);
         closeAllPopups();
       })
       .catch(() => {
@@ -251,7 +252,7 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <>
-        <Header onSignOut={handleLogout} userEmail={userEmail} />
+        <Header onSignOut={handleLogout} />
         <Routes>
           <Route path="/" element={<ProtectedRoute
             loggedIn={loggedIn}
