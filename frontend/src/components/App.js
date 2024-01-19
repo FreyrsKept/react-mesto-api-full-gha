@@ -37,15 +37,15 @@ function App() {
   const [addSubmitTitle, setAddSubmitTitle] = useState("Добавить");
   const [infoTitle, setInfoTitle] = useState("");
   const [infoImg, setInfoImg] = useState(null);
-  const [currentToken, setCurrentToken] = useState(localStorage.getItem('token'));
+  const [token, setCurrentToken] = useState(localStorage.getItem('token'));
 
   useEffect(() => {
     checkToken();
   }, []);
-  console.log(currentToken);
+  console.log(token);
   useEffect(() => {
-    if (loggedIn && currentToken) {
-      Promise.all([api.getUserData(currentToken), api.getInitialCards(currentToken)])
+    if (loggedIn && token) {
+      Promise.all([api.getUserData(token), api.getInitialCards(token)])
         .then(([resUser, resCards]) => {
           setCurrentUser(resUser);
           setCards(resCards.reverse());
@@ -54,7 +54,7 @@ function App() {
           console.log(`Ошибка при загрузке данных пользователя и карточек.`);
         });
     }
-  }, [loggedIn, currentToken]);
+  }, [loggedIn, token]);
 
   function handleRegistration(email, password) {
     auth.registerUser(email, password)
@@ -78,8 +78,11 @@ function App() {
     auth.loginUser(email, password)
       .then((data) => {
         if (data.token) {
-          setUserEmail(email);
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('loggedIn', true);
+          // setToken(data.token);
           setLoggedIn(true);
+          setUserEmail(email);
           navigate('/', { replace: true });
         }
       })
@@ -99,8 +102,8 @@ function App() {
   }
 
   function checkToken() {
-    if (currentToken) {
-      auth.getContent(currentToken).then((res) => {
+    if (token) {
+      auth.getContent(token).then((res) => {
         if (res) {
           setLoggedIn(true);
           setUserEmail(res.email);
@@ -146,7 +149,7 @@ function App() {
   function handleCardLike(card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
     if (isLiked) {
-      api.removeLike(card._id, currentToken)
+      api.removeLike(card._id, token)
         .then((res) => {
           setCards((state) =>
             state.map((c) => c._id === card._id ? res : c)
@@ -156,7 +159,7 @@ function App() {
           console.log(`Ошибка при удалении лайка.`)
         });
     } else {
-      api.setLike(card._id, currentToken)
+      api.setLike(card._id, token)
         .then((res) => {
           setCards((state) =>
             state.map((c) => c._id === card._id ? res : c)
@@ -169,7 +172,7 @@ function App() {
   }
 
   function handleCardDelete() {
-    api.deleteCard(deletedCard._id, currentToken)
+    api.deleteCard(deletedCard._id, token)
       .then(() => {
         setCards((state) =>
           state.filter((c) => c !== deletedCard)
@@ -186,7 +189,7 @@ function App() {
     setEditSubmitTitle("Сохраняем...");
     const name = userData.name;
     const about = userData.about;
-    api.editProfile(name, about, currentToken)
+    api.editProfile(name, about, token)
       .then((res) => {
         setCurrentUser(res);
         closeAllPopups();
@@ -201,7 +204,7 @@ function App() {
 
   function handleUpdateAvatar(avatarData) {
     setAvatarSubmitTitle("Обновляем...");
-    api.changeAvatar(avatarData.avatar, currentToken)
+    api.changeAvatar(avatarData.avatar, token)
       .then((res) => {
         setCurrentUser(res);
         closeAllPopups();
@@ -218,7 +221,7 @@ function App() {
     setAddSubmitTitle("Добавляем...");
     const place = cardData.place;
     const pictureSrc = cardData.pictureSrc;
-    api.addNewCard(place, pictureSrc, currentToken)
+    api.addNewCard(place, pictureSrc, token)
       .then((newCard) => {
         setCards([newCard, ...cards]);
         closeAllPopups();
@@ -237,6 +240,7 @@ function App() {
       closeAllPopups();
     }
   }
+
 
   function handleOverlay(e) {
     if (!e.target.closest('.popup__container')) {

@@ -11,108 +11,106 @@ class Api {
         return Promise.reject(`Ошибка: ${res.status}`);
     }
 
-    getUserData(token) {
-        return fetch(`${this._url}/users/me`, {
+    getUserData() {
+        return this._request(this._baseUrl + '/users/me', {
+            headers: this._headers,
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
         })
-            .then(this.checkResponse);
+            .then((res) => {
+                return res;
+            });
     }
 
-    getInitialCards(token) {
-        return fetch(`${this._url}/cards`, {
+    getInitialCards() {
+        return this._request(this._baseUrl + '/cards', {
+            headers: this._headers,
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
         })
-            .then(this.checkResponse);
-    }
+            .then((res) => {
+                return res;
+            });
+    };
 
-    editProfile(userName, userAbout, token) {
-        return fetch(`${this._url}/users/me`, {
+    editProfile(name, about) {
+        return this._request(this._baseUrl + '/users/me', {
+            headers: this._headers,
             method: 'PATCH',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify({
-                name: userName,
-                about: userAbout,
+                name: name,
+                about: about
             })
         })
-            .then(this.checkResponse);
+            .then((res) => {
+                return res;
+            });
     }
 
-    addNewCard(newName, newUrl, token) {
-        return fetch(`${this._url}/cards`, {
+    addNewCard(name, link) {
+        return this._request(this._baseUrl + '/cards', {
+            headers: this._headers,
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify({
-                name: newName,
-                link: newUrl,
+                name: name,
+                link: link
             })
         })
-            .then(this.checkResponse);
+            .then((res) => {
+                return res;
+            });
     }
 
-    deleteCard(cardId, token) {
-        return fetch(`${this._url}/cards/${cardId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
+    deleteCard(cardId) {
+        return this._request(this._baseUrl + '/cards/' + cardId, {
+            headers: this._headers,
+            method: 'DELETE'
+        });
+    }
+
+    setLike(cardId) {
+        return this._request(this._baseUrl + '/cards/' + cardId + '/likes', {
+            headers: this._headers,
+            method: 'PUT'
         })
-            .then(this.checkResponse);
+            .then((res) => {
+                return res;
+            });
     }
 
-    setLike(cardId, token) {
-        return fetch(`${this._url}/cards/${cardId}/likes`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
+    removeLike(cardId) {
+        return this._request(this._baseUrl + '/cards/' + cardId + '/likes', {
+            headers: this._headers,
+            method: 'DELETE'
         })
-            .then(this.checkResponse);
+            .then((res) => {
+                return res;
+            });
     }
 
-    removeLike(cardId, token) {
-        return fetch(`${this._url}/cards/${cardId}/likes`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(this.checkResponse);
-    }
-
-    changeAvatar(avatarSrc, token) {
-        return fetch(`${this._url}/users/me/avatar`, {
+    changeAvatar(avatarSrc) {
+        return this._request(this._baseUrl + '/users/me/avatar', {
+            headers: this._headers,
             method: 'PATCH',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify({
-                avatar: avatarSrc,
+                avatar: avatarSrc
             })
         })
-            .then(this.checkResponse);
+            .then((res) => {
+                return res;
+            });
+    }
+
+    _request(url, options) {
+        const token = localStorage.getItem('token');
+        if (token !== null) {
+            options.headers.authorization = `Bearer ${token}`;
+        }
+        return fetch(url, options).then(this._checkResponse)
     }
 }
 
 const api = new Api({
     url: 'https://api.freyrskept.nomoredomainsmonster.ru',
+    headers: { 'Content-Type': 'application/json' }
 });
 
 export default api;
