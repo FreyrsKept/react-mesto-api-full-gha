@@ -44,8 +44,6 @@ function App() {
     }
   }, [token]);
 
-  console.log(token);
-
   useEffect(() => {
     if (loggedIn && token) {
       Promise.all([api.getUserData(token), api.getInitialCards(token)])
