@@ -12,7 +12,7 @@ class Api {
     }
 
     getUserData() {
-        return this._request(this._baseUrl + '/users/me', {
+        return this._request(this._url + '/users/me', {
             headers: this._headers,
             method: 'GET',
         })
@@ -22,7 +22,7 @@ class Api {
     }
 
     getInitialCards() {
-        return this._request(this._baseUrl + '/cards', {
+        return this._request(this._url + '/cards', {
             headers: this._headers,
             method: 'GET',
         })
@@ -32,7 +32,7 @@ class Api {
     };
 
     editProfile(name, about) {
-        return this._request(this._baseUrl + '/users/me', {
+        return this._request(this._url + '/users/me', {
             headers: this._headers,
             method: 'PATCH',
             body: JSON.stringify({
@@ -46,7 +46,7 @@ class Api {
     }
 
     addNewCard(name, link) {
-        return this._request(this._baseUrl + '/cards', {
+        return this._request(this._url + '/cards', {
             headers: this._headers,
             method: 'POST',
             body: JSON.stringify({
@@ -60,14 +60,14 @@ class Api {
     }
 
     deleteCard(cardId) {
-        return this._request(this._baseUrl + '/cards/' + cardId, {
+        return this._request(this._url + '/cards/' + cardId, {
             headers: this._headers,
             method: 'DELETE'
         });
     }
 
     setLike(cardId) {
-        return this._request(this._baseUrl + '/cards/' + cardId + '/likes', {
+        return this._request(this._url + '/cards/' + cardId + '/likes', {
             headers: this._headers,
             method: 'PUT'
         })
@@ -77,7 +77,7 @@ class Api {
     }
 
     removeLike(cardId) {
-        return this._request(this._baseUrl + '/cards/' + cardId + '/likes', {
+        return this._request(this._url + '/cards/' + cardId + '/likes', {
             headers: this._headers,
             method: 'DELETE'
         })
@@ -87,7 +87,7 @@ class Api {
     }
 
     changeAvatar(avatarSrc) {
-        return this._request(this._baseUrl + '/users/me/avatar', {
+        return this._request(this._url + '/users/me/avatar', {
             headers: this._headers,
             method: 'PATCH',
             body: JSON.stringify({
