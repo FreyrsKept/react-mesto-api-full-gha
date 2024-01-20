@@ -145,30 +145,32 @@ function App() {
     setSelectedCard(card);
   }
 
-  const handleCardLike = useCallback(function (card) {
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
-    if (isLiked) {
-      api.removeLike(card._id, token)
-        .then((res) => {
-          setCards((state) =>
-            state.map((c) => c._id === card._id ? res.data : c)
-          );
-        })
-        .catch(() => {
-          console.log(`Ошибка при удалении лайка.`)
-        });
-    } else {
-      api.setLike(card._id, token)
-        .then((res) => {
-          setCards((state) =>
-            state.map((c) => c._id === card._id ? res.data : c)
-          );
-        })
-        .catch(() => {
-          console.log(`Ошибка при постановке лайка.`)
-        });
-    }
-  }, [])
+  const handleCardLike = useCallback(
+    function (card) {
+      const isLiked = card.likes.some(i => i._id === currentUser._id);
+      if (isLiked) {
+        api
+          .removeLike(card._id, token)
+          .then(res => {
+            setCards(state =>
+              state.map(c => (c._id === card._id ? res.data : c))
+            );
+          })
+          .catch(() => {
+            console.log(`Ошибка при удалении лайка.`)
+          });
+      } else {
+        api.setLike(card._id, token)
+          .then(res => {
+            setCards((state) =>
+              state.map(c => (c._id === card._id ? res.data : c))
+            );
+          })
+          .catch(() => {
+            console.log(`Ошибка при постановке лайка.`)
+          });
+      }
+    }, [currentUser])
 
   function handleCardDelete() {
     api.deleteCard(deletedCard._id, token)
@@ -222,7 +224,7 @@ function App() {
     const pictureSrc = cardData.pictureSrc;
     api.addNewCard(place, pictureSrc, token)
       .then((newCard) => {
-        setCards([newCard, ...cards]);
+        setCards([newCard.data, ...cards]);
         closeAllPopups();
         console.log(`Карточка добавлена.`)
       })

@@ -14,22 +14,23 @@ const getCards = (req, res, next) => {
     .catch(next);
 };
 
-const createCard = (req, res, next) => {
-  const { name, link } = req.body;
-  Card.create({ name, link, owner: req.user._id })
-    .then((card) => {
-      res.status(OK_CREATED_STATUS).send({ data: card });
-    })
-    .catch((e) => {
-      if (e instanceof mongoose.Error.ValidationError) {
-        const message = Object.values(e.errors)
-          .map((error) => error.message)
-          .join('; ');
-        next(new BadRequest(message));
-      } else {
-        next(e);
-      }
-    });
+const createCard = async (req, res, next) => {
+  try {
+    const { name, link } = req.body;
+    const newCard = new Card({ name, link, owner: req.user._id });
+    const cardPopulate = await Card.populate(newCard, ['owner', 'likes']);
+    await cardPopulate.save();
+    res.status(OK_CREATED_STATUS).send({ data: cardPopulate });
+  } catch (e) {
+    if (e instanceof mongoose.Error.ValidationError) {
+      const message = Object.values(e.errors)
+        .map((error) => error.message)
+        .join('; ');
+      next(new BadRequest(message));
+    } else {
+      next(e);
+    }
+  }
 };
 
 const deleteCard = (req, res, next) => {
